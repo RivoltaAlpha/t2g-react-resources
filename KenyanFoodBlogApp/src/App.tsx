@@ -8,6 +8,8 @@ import BlogsPage from "./Pages/Blogs";
 import BlogPostPage from "./Pages/BlogPage";
 import ContactPage from "./Pages/Contact";
 import NotFoundPage from "./Pages/NotFound";
+import LoginForm from "./Pages/LoginForm";
+import RegisterForm from "./Pages/RegisterForm";
 
 export default function App() {
   return (
@@ -22,6 +24,8 @@ export default function App() {
             <Route path="/blogs" element={<BlogsPage />} />
             <Route path="/blogs/:id" element={<BlogPostPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

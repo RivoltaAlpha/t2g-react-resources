@@ -62,7 +62,29 @@ export default function Navigation() {
               <span>Contact</span>
             </NavLink>
           </div>
+        <div className="flex gap-6">
+          <NavLink 
+            to="/login" 
+            className={({ isActive }) => 
+              `flex items-center gap-2 hover:text-amber-200 transition ${isActive ? 'text-amber-300 font-semibold' : ''}`
+            }
+          >
+            <Coffee className="w-5 h-5" />
+            <span>Login</span>
+          </NavLink>
+          
+          <NavLink 
+            to="/register" 
+            className={({ isActive }) => 
+              `flex items-center gap-2 hover:text-amber-200 transition ${isActive ? 'text-amber-300 font-semibold' : ''}`
+            }
+          >
+            <Coffee className="w-5 h-5" />
+            <span>Register</span>
+          </NavLink>
         </div>
+        </div>
+        
       </div>
     </nav>
   );
