@@ -17,18 +17,18 @@ export const paymentsAPI = createApi({
     tagTypes: ['Payments'],
     endpoints: (builder) => ({
         getPayments: builder.query<Payment[], void>({
-            query: () => '/payments',
+            query: () => '/get-all',
             providesTags: ['Payments'],
         }),
 
         getPayment: builder.query<Payment, number>({
-            query: (payment_id) => `/payments/${payment_id}`,
+            query: (payment_id) => `/get-payment/${payment_id}`,
             providesTags: ['Payments'],
         }),
 
         createPayment: builder.mutation<Payment, CreatePayment>({
             query: (newPayment) => ({
-                url: '/payments',
+                url: '/create-payment',
                 method: 'POST',
                 body: newPayment,
             }),
@@ -37,7 +37,7 @@ export const paymentsAPI = createApi({
 
         updatePayment: builder.mutation<Payment, { id: number; data: UpdatePayment }>({
             query: ({ id, data }) => ({
-                url: `/payments/${id}`,
+                url: `/update-payment/${id}`,
                 method: 'PUT',
                 body: data,
             }),
@@ -46,7 +46,7 @@ export const paymentsAPI = createApi({
 
         deletePayment: builder.mutation<{ success: boolean; id: number }, number>({
             query: (id) => ({
-                url: `/payments/${id}`,
+                url: `/delete-payment/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Payments'],

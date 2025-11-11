@@ -22,13 +22,13 @@ export const registrationsAPI = createApi({
         }),
 
         getRegistration: builder.query<RegistrationWithDetails, number>({
-            query: (registration_id) => `/get-reg/${registration_id}`,
+            query: (registration_id) => `/get-registration/${registration_id}`,
             providesTags: ['Registrations'],
         }),
 
         createRegistration: builder.mutation<Registration, CreateRegistration>({
             query: (newRegistration) => ({
-                url: '/registrations',
+                url: '/create-registration',
                 method: 'POST',
                 body: newRegistration,
             }),
@@ -37,7 +37,7 @@ export const registrationsAPI = createApi({
 
         updateRegistration: builder.mutation<Registration, { id: number; data: UpdateRegistration }>({
             query: ({ id, data }) => ({
-                url: `/update-registrations/${id}`,
+                url: `/update-registration/${id}`,
                 method: 'PUT',
                 body: data,
             }),
@@ -46,7 +46,7 @@ export const registrationsAPI = createApi({
 
         deleteRegistration: builder.mutation<{ success: boolean; id: number }, number>({
             query: (id) => ({
-                url: `/delete-registrations/${id}`,
+                url: `/delete-registration/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Registrations'],

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useGetEventsQuery, useDeleteEventMutation } from '../features/Events/eventsApi';
 import { useGetRegistrationsQuery } from '../features/Registrations/registrationsApi';
 import { useGetFeedbacksQuery } from '../features/Feedbacks/feedbacksApi';
-import EventCard from '../components/Events/EventCard';
 import EventForm from '../components/Events/EventForm';
 import Modal from '../components/UI/Modal';
 import LoadingSpinner from '../components/UI/LoadingSpinner';

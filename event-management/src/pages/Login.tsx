@@ -11,7 +11,7 @@ import type { LoginRequest } from "../types/types";
 
 export const Login = () => {
   const [user, setUser] = useState<LoginRequest>({
-    name: "",
+    email: "",
     password: "",
     role: "user",
   });
@@ -22,17 +22,13 @@ export const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (user.role === "Admin") {
-        navigate("/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUser((prev) => ({ ...prev, [name]: value }));
+    setUser((prev: LoginRequest) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +38,19 @@ export const Login = () => {
       const response = await loginUser(user).unwrap();
       console.log("Backend response:", response); // Debugging step
 
-      dispatch(setUserData({ user: response.user, token: response.token }));
+      // Transform the backend response to match our frontend structure
+      const userData = {
+        user_id: response.foundUser.user_id,
+        name: response.foundUser.email.split('@')[0], // Use email prefix as name
+        email: response.foundUser.email,
+        phone: "", // Not provided by backend, set empty
+        password: "", // Don't store password in frontend
+        role: response.foundUser.role,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      dispatch(setUserData({ user: userData, token: response.accessToken }));
       // Display the success message before navigation
       toast.success("Logged in successfully", {
         position: "bottom-center",
@@ -77,14 +85,14 @@ export const Login = () => {
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
                 <input
-                  value={user.name}
+                  value={user.email}
                   onChange={handleChange}
-                  name="name"
-                  type="text"
-                  autoComplete="name"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
                   required
                   className="rounded w-full mb-5 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="name"
+                  placeholder="Email"
                 />
               </div>
               <div>
@@ -105,7 +113,7 @@ export const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative w-1/2 lg:ml-[150px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white sm:ml-0 bg-cards hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="group relative w-1/2 lg:ml-[150px] flex justify-center py-2 px-4 border border-black text-sm font-medium rounded-md text-black sm:ml-0 bg-cards hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 {isLoading ? "Logging in..." : "Login"}
                 {/* success toaster */}

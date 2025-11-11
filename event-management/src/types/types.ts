@@ -22,14 +22,21 @@ export interface Luser {
 }
 
 export interface LoginRequest {
-  name: string;
+  email: string;
   password: string;
-  role: string;
+  role?: string;
 }
 
 export interface LoginResponse {
-  user: TUser;
-  token: string;
+  foundUser: {
+    user_id: number;
+    email: string;
+    password: string;
+    role: string;
+  };
+  accessToken: string;
+  refreshToken: string;
+  isAuthenticated: boolean;
 }
 
 export type TUser = {

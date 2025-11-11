@@ -10,7 +10,6 @@ const initialState: UserAuthenticatedState = {
   isAuthenticated: !!localStorage.getItem('token'),
   loading: false,
   error: null,
-
 };
 
 const userAuthenticationSlice = createSlice({

@@ -17,18 +17,18 @@ export const feedbacksAPI = createApi({
     tagTypes: ['Feedbacks'],
     endpoints: (builder) => ({
         getFeedbacks: builder.query<Feedback[], void>({
-            query: () => '/feedbacks',
+            query: () => '/get-all',
             providesTags: ['Feedbacks'],
         }),
 
         getFeedback: builder.query<Feedback, number>({
-            query: (feedback_id) => `/feedbacks/${feedback_id}`,
+            query: (feedback_id) => `/get-feedback/${feedback_id}`,
             providesTags: ['Feedbacks'],
         }),
 
         createFeedback: builder.mutation<Feedback, CreateFeedback>({
             query: (newFeedback) => ({
-                url: '/feedbacks',
+                url: '/create-feedback',
                 method: 'POST',
                 body: newFeedback,
             }),
@@ -37,7 +37,7 @@ export const feedbacksAPI = createApi({
 
         updateFeedback: builder.mutation<Feedback, { id: number; data: UpdateFeedback }>({
             query: ({ id, data }) => ({
-                url: `/feedbacks/${id}`,
+                url: `/update-feedback/${id}`,
                 method: 'PUT',
                 body: data,
             }),
@@ -46,7 +46,7 @@ export const feedbacksAPI = createApi({
 
         deleteFeedback: builder.mutation<{ success: boolean; id: number }, number>({
             query: (id) => ({
-                url: `/feedbacks/${id}`,
+                url: `/delete-feedback/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Feedbacks'],

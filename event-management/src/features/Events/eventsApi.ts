@@ -1,25 +1,35 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { Event, CreateEvent, UpdateEvent, EventWithDetails } from '../../types/types';
-import baseQueryWithAuth from '../../utils/baseQuery';
+import { fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 export const eventsAPI = createApi({
     reducerPath: 'eventsAPI',
-    baseQuery: baseQueryWithAuth,
+    baseQuery: fetchBaseQuery({ 
+        baseUrl: 'http://localhost:8000/events',
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            headers.set('Content-Type', 'application/json');
+            return headers;
+        },
+    }),
     tagTypes: ['Events'],
     endpoints: (builder) => ({
         getEvents: builder.query<Event[], void>({
-            query: () => '/events',
+            query: () => '/get-all',
             providesTags: ['Events'],
         }),
 
         getEvent: builder.query<EventWithDetails, number>({
-            query: (event_id) => `/events/${event_id}`,
+            query: (event_id) => `/get-event/${event_id}`,
             providesTags: ['Events'],
         }),
 
         createEvent: builder.mutation<Event, CreateEvent>({
             query: (newEvent) => ({
-                url: '/events',
+                url: '/create-event',
                 method: 'POST',
                 body: newEvent,
             }),
@@ -28,7 +38,7 @@ export const eventsAPI = createApi({
 
         updateEvent: builder.mutation<Event, { id: number; data: UpdateEvent }>({
             query: ({ id, data }) => ({
-                url: `/events/${id}`,
+                url: `/update-event/${id}`,
                 method: 'PUT',
                 body: data,
             }),
@@ -37,7 +47,7 @@ export const eventsAPI = createApi({
 
         deleteEvent: builder.mutation<{ success: boolean; id: number }, number>({
             query: (id) => ({
-                url: `/events/${id}`,
+                url: `/delete-event/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Events'],
