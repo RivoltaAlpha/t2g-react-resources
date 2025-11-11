@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Footer from "./Components/Footer";
 import Navigation from "./Components/Navigation";
 import HomePage from "./Pages/Landing";
@@ -11,7 +11,7 @@ import NotFoundPage from "./Pages/NotFound";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
       <div className="min-h-screen flex flex-col bg-amber-50">
         <Navigation />
         <main className="grow">
@@ -25,9 +25,8 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
-        
         <Footer />
       </div>
-    </BrowserRouter>
+    </>
   );
 }

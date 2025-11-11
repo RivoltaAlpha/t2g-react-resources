@@ -1,7 +1,6 @@
 import { Clock, User } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
 
-
 // Dummy blog data
 const blogPosts = [
   {

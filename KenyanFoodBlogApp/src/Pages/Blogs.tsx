@@ -66,7 +66,6 @@ const blogPosts = [
   }
 ];
 
-
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
