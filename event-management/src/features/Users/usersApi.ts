@@ -27,7 +27,7 @@ export const usersAPI = createApi({
 
         createUser: builder.mutation<User, Partial<User>>({
             query: (newUser) => ({
-                url: '/user',
+                url: '/create-user',
                 method: 'POST',
                 body: newUser,
             }),

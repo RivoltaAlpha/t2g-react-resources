@@ -1,16 +1,5 @@
 # RTK Query - Complete Guide
 
-## Table of Contents
-1. [What Is RTK Query?](#what-is-rtk-query)
-2. [Why Use RTK Query?](#why-use-rtk-query)
-3. [Installation & Setup](#installation--setup)
-4. [Core Concepts](#core-concepts)
-5. [Creating Your First API](#creating-your-first-api)
-6. [Using RTK Query in Components](#using-rtk-query-in-components)
-7. [Advanced Features](#advanced-features)
-8. [Best Practices](#best-practices)
-9. [Common Patterns](#common-patterns)
-
 ---
 
 ## What Is RTK Query?
@@ -421,6 +410,108 @@ function UsersManager() {
 
 ---
 
+### Real-World Example: Complete API Setup
+
+```typescript
+// services/usersApi.ts
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+interface User {
+  id: number
+  name: string
+  email: string
+  role: 'admin' | 'user'
+}
+
+interface CreateUserRequest {
+  name: string
+  email: string
+  password: string
+}
+
+export const usersAPI = createApi({
+  reducerPath: 'usersAPI',
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: 'https://api.example.com',
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`)
+      }
+      headers.set('Content-Type', 'application/json')
+      return headers
+    }
+  }),
+  tagTypes: ['Users'],
+  endpoints: (builder) => ({
+    // GET /users - Fetch all users
+    getUsers: builder.query<User[], void>({
+      query: () => '/users',
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Users' as const, id })),
+              { type: 'Users', id: 'LIST' }
+            ]
+          : [{ type: 'Users', id: 'LIST' }]
+    }),
+
+    // GET /users/:id - Fetch single user
+    getUser: builder.query<User, number>({
+      query: (id) => `/users/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Users', id }]
+    }),
+
+    // POST /users - Create user
+    createUser: builder.mutation<User, CreateUserRequest>({
+      query: (newUser) => ({
+        url: '/users',
+        method: 'POST',
+        body: newUser
+      }),
+      invalidatesTags: [{ type: 'Users', id: 'LIST' }]
+    }),
+
+    // PUT /users/:id - Update user
+    updateUser: builder.mutation<User, { id: number; data: Partial<User> }>({
+      query: ({ id, data }) => ({
+        url: `/users/${id}`,
+        method: 'PUT',
+        body: data
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Users', id },
+        { type: 'Users', id: 'LIST' }
+      ]
+    }),
+
+    // DELETE /users/:id - Delete user
+    deleteUser: builder.mutation<{ success: boolean }, number>({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: (result, error, id) => [
+        { type: 'Users', id },
+        { type: 'Users', id: 'LIST' }
+      ]
+    })
+  })
+})
+
+export const {
+  useGetUsersQuery,
+  useGetUserQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation
+} = usersAPI
+
+export default usersAPI
+```
+
+---
+
 ## Advanced Features
 
 ### 1. Authentication & Headers
@@ -780,108 +871,6 @@ function UserListItem({ user }: { user: User }) {
     </div>
   )
 }
-```
-
----
-
-## Real-World Example: Complete API Setup
-
-```typescript
-// services/usersApi.ts
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-interface User {
-  id: number
-  name: string
-  email: string
-  role: 'admin' | 'user'
-}
-
-interface CreateUserRequest {
-  name: string
-  email: string
-  password: string
-}
-
-export const usersAPI = createApi({
-  reducerPath: 'usersAPI',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: 'https://api.example.com',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token')
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }
-      headers.set('Content-Type', 'application/json')
-      return headers
-    }
-  }),
-  tagTypes: ['Users'],
-  endpoints: (builder) => ({
-    // GET /users - Fetch all users
-    getUsers: builder.query<User[], void>({
-      query: () => '/users',
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Users' as const, id })),
-              { type: 'Users', id: 'LIST' }
-            ]
-          : [{ type: 'Users', id: 'LIST' }]
-    }),
-
-    // GET /users/:id - Fetch single user
-    getUser: builder.query<User, number>({
-      query: (id) => `/users/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Users', id }]
-    }),
-
-    // POST /users - Create user
-    createUser: builder.mutation<User, CreateUserRequest>({
-      query: (newUser) => ({
-        url: '/users',
-        method: 'POST',
-        body: newUser
-      }),
-      invalidatesTags: [{ type: 'Users', id: 'LIST' }]
-    }),
-
-    // PUT /users/:id - Update user
-    updateUser: builder.mutation<User, { id: number; data: Partial<User> }>({
-      query: ({ id, data }) => ({
-        url: `/users/${id}`,
-        method: 'PUT',
-        body: data
-      }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'Users', id },
-        { type: 'Users', id: 'LIST' }
-      ]
-    }),
-
-    // DELETE /users/:id - Delete user
-    deleteUser: builder.mutation<{ success: boolean }, number>({
-      query: (id) => ({
-        url: `/users/${id}`,
-        method: 'DELETE'
-      }),
-      invalidatesTags: (result, error, id) => [
-        { type: 'Users', id },
-        { type: 'Users', id: 'LIST' }
-      ]
-    })
-  })
-})
-
-export const {
-  useGetUsersQuery,
-  useGetUserQuery,
-  useCreateUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation
-} = usersAPI
-
-export default usersAPI
 ```
 
 ---

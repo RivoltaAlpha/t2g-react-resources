@@ -289,6 +289,8 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 ### Step 5: Use Redux in Components
 
+![alt text](image.png)
+
 ```tsx
 // features/todos/TodoList.tsx
 import React, { useState } from 'react'
