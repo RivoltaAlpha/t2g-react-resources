@@ -72,6 +72,7 @@ export interface UserAuthenticatedState {
     loading: boolean
     error: string | null
   }
+  
   export interface UserState {
     user: TUser | null;
     loading: boolean;

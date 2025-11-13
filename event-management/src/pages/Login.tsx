@@ -13,7 +13,7 @@ export const Login = () => {
   const [user, setUser] = useState<LoginRequest>({
     email: "",
     password: "",
-    role: "user",
+    role: "User",
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();

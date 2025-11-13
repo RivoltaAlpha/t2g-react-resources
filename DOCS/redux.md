@@ -200,77 +200,6 @@ export const { todoAdded, todoToggled, todoDeleted } = todosSlice.actions
 export default todosSlice.reducer
 ```
 
-### `createAsyncThunk()`
-For handling async operations (API calls, etc.)
-
-```ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-
-// Async thunk for fetching users
-export const fetchUsers = createAsyncThunk(
-  'users/fetchUsers',
-  async () => {
-    const response = await fetch('https://api.example.com/users')
-    return response.json()
-  }
-)
-
-const usersSlice = createSlice({
-  name: 'users',
-  initialState: {
-    entities: [],
-    loading: 'idle',
-    error: null
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.loading = 'pending'
-      })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.loading = 'succeeded'
-        state.entities = action.payload
-      })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.loading = 'failed'
-        state.error = action.error.message
-      })
-  }
-})
-```
-
-### `createEntityAdapter()`
-Helps manage normalized data (collections of items).
-
-```ts
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-
-interface Book {
-  id: string
-  title: string
-  author: string
-}
-
-const booksAdapter = createEntityAdapter<Book>({
-  selectId: (book) => book.id,
-  sortComparer: (a, b) => a.title.localeCompare(b.title)
-})
-
-const booksSlice = createSlice({
-  name: 'books',
-  initialState: booksAdapter.getInitialState(),
-  reducers: {
-    bookAdded: booksAdapter.addOne,
-    booksReceived: booksAdapter.setAll,
-    bookUpdated: booksAdapter.updateOne,
-    bookRemoved: booksAdapter.removeOne
-  }
-})
-```
-
----
-
 ## Building Your First Redux App
 
 ### Step 1: Set Up the Store
@@ -411,65 +340,6 @@ export function TodoList() {
   )
 }
 ```
-
----
-
-## Advanced Patterns
-
-### Selectors with Memoization
-
-```ts
-import { createSelector } from '@reduxjs/toolkit'
-import type { RootState } from '../../app/store'
-
-// Basic selector
-const selectTodos = (state: RootState) => state.todos
-const selectFilter = (state: RootState) => state.filters.status
-
-// Memoized selector
-export const selectFilteredTodos = createSelector(
-  [selectTodos, selectFilter],
-  (todos, filter) => {
-    if (filter === 'completed') {
-      return todos.filter(todo => todo.completed)
-    }
-    if (filter === 'active') {
-      return todos.filter(todo => !todo.completed)
-    }
-    return todos
-  }
-)
-```
-
-### RTK Query (API Integration)
-
-```ts
-// services/api.ts
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-export const api = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com/' }),
-  endpoints: (builder) => ({
-    getPosts: builder.query({
-      query: () => 'posts',
-    }),
-    getPostById: builder.query({
-      query: (id) => `posts/${id}`,
-    }),
-    createPost: builder.mutation({
-      query: (newPost) => ({
-        url: 'posts',
-        method: 'POST',
-        body: newPost,
-      }),
-    }),
-  }),
-})
-
-export const { useGetPostsQuery, useGetPostByIdQuery, useCreatePostMutation } = api
-```
-
 ---
 
 ## Best Practices
@@ -480,11 +350,8 @@ src/
   features/
     todos/
       todosSlice.ts
-      TodoList.tsx
-      TodoItem.tsx
     users/
       usersSlice.ts
-      UserProfile.tsx
 ```
 
 ### 2. **Use TypeScript**
